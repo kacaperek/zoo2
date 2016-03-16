@@ -1,104 +1,86 @@
 #include <iostream>
-#include <cstdio>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 
 using namespace std;
 
-class zwierze
-{
-protected:
-    int8_t masa;
-
+class zwierze{
 public:
+    virtual ~zwierze();
     virtual void daj_glos() = 0;
-
-    void ustaw_mase(int8_t masa)
-    {
-        this -> masa = masa;
-    }
-
-    zwierze()
-    {
-        ustaw_mase(0);
-    }
 };
 
-class koza : public zwierze
-{
+class fabryka{
+private:
+    vector <kreatoryZwierzy> kreatory;
+
 public:
-    virtual void daj_glos()
-    {
-        cout << "meee!" << endl;
+    void nowy_gatunek(zwierzeKreator* kreator) {kreatory.push_back(kreator);}
+
+    zwierze *tworz() {
+        uint32_t index  = rand() % (kreatory.size());
+        return kreatory.at(index) -> tworz();
     }
 
-   void ustaw_mase(int8_t masa)
-    {
-        zwierze::ustaw_mase(masa%50);
-        cout << masa << endl;
+    ~fabryka(){
+        for( uint32_t j = 0; j< kreatory.size(); j++)
+            delete kreatory.at(j);
+
+        kreatory.clear();
+
     }
 };
-
-class gnu : public zwierze
-{
-    virtual void daj_glos()
-    {
-        cout << "gnuuu!!!" << endl;
-    }
-
-    void ustaw_mase(int8_t masa)
-    {
-        zwierze::ustaw_mase(masa%75);
-        cout << masa << endl;
-    }
+class zwierzeKreator{
+public:
+    virtual zwierze* tworz() = 0;
 };
 
-class zebra : public zwierze
-{
-    virtual void daj_glos()
-    {
-        cout << "zebr zebr" << endl;
-    }
-
-    void ustaw_mase(int8_t masa)
-    {
-        zwierze::ustaw_mase(masa%120);
-        cout << masa << endl;
-    }
+class gnu : public zwierze{
+    public:
+    virtual void daj_glos() { cout << "gnuuu!!!" << endl; }
 };
 
-class forfiter : public zwierze
-{
-    virtual void daj_glos()
-    {
-        cout << "szwagier!" << endl;
-    }
+class gnuKreator: public zwierzeKreator{
+protected:
+   void ustaw_mase(int8_t masa) { }
 
-    void ustaw_mase(uint8_t masa)
-    {
-        zwierze::ustaw_mase(masa%30);
-        cout << masa << endl;
-    }
+public:
+    virtual zwierze* tworz() { return new gnu(); }
+};
+
+class zebra : public zwierze{
+    public:
+    virtual void daj_glos() { cout << "zebr zebr" << endl; }
+
+    virtual ~zebra();
+};
+
+class zebraKreator : public zwierzeKreator{
+protected:
+    void ustaw_mase(uint8_t masa) { }
+
+public:
+    virtual zwierze* tworz() {return new zebra(); }
 };
 
 int main()
 {
-    vector <int8_t> zwierz;
-    zwierze *z;
+    vector <zwierzeKreator*> z;
+    //zwierze *z;
     srand(time(NULL));
 
-    int8_t masa = rand();
+    //int8_t masa = rand();
 
-    z = new koza;
+    for( int i=0; i<10; i++ ){
+        if( rand() % 2 )
+            z.push_back(new gnuKreator());
+        else
+            z.push_back(new zebraKreator());
 
-    z -> daj_glos();
-    z -> ustaw_mase(masa);
-    delete z;
-    //for(int i = 0; i < 10; i++)
-    //{
 
-    //}
+        z.at(i) -> daj_glos;
+    }
 
     return 0;
 }
