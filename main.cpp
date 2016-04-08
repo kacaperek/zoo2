@@ -81,6 +81,6 @@ int main()
 
         z.at(i) -> daj_glos;
     }
-
+    //git desktop app test
     return 0;
 }
