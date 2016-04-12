@@ -4,7 +4,7 @@
 #include <ctime>
 
 using namespace std;
-
+//asdfg
 class zwierze{
 public:
     virtual ~zwierze();
